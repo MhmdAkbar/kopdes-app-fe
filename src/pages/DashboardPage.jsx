@@ -1,20 +1,22 @@
 // src/pages/DashboardPage.jsx
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext.jsx';
+import { useTopup } from '../hooks/useTopup.js';
 import { DashboardLayout } from '../components/templates/DashboardLayout.jsx';
+import { TopupModal } from '../components/molecules/TopupModal.jsx';
 import Icon from '../components/atoms/Icon.jsx';
 
 export const DashboardPage = () => {
   const { user } = useAuth();
+  
   const [showBalance, setShowBalance] = useState(true);
+  const [isTopupModalOpen, setIsTopupModalOpen] = useState(false);
+  const { handleTopup, isProcessing } = useTopup(() => setIsTopupModalOpen(false));
+  
 
   const formatRp = (value) => {
     if (!showBalance) return 'Rp •••••••';
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0
-    }).format(value || 0);
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value || 0);
   };
 
   return (
@@ -33,20 +35,31 @@ export const DashboardPage = () => {
         </button>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {/* Savings Card */}
         <div className="bg-gradient-to-br from-kop-500 to-kop-800 rounded-2xl p-6 text-white shadow-lg shadow-kop-main/20 relative overflow-hidden group">
           <div className="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
             <Icon name="Wallet" size={120} />
           </div>
           <div className="relative z-10 flex flex-col h-full justify-between">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm"><Icon name="ArrowDownToLine" size={20} /></div>
-              <p className="text-kop-50 font-medium tracking-wide">Saldo Simpanan</p>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm"><Icon name="ArrowDownToLine" size={20} /></div>
+                <p className="text-kop-50 font-medium tracking-wide">Saldo Simpanan</p>
+              </div>
+              {/* Tombol Trigger Top-up */}
+              <button 
+                onClick={() => setIsTopupModalOpen(true)}
+                className="px-3 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-sm font-medium transition-colors"
+              >
+                + Top Up
+              </button>
             </div>
             <h2 className="text-4xl font-bold tracking-tight font-mono">{formatRp(user?.wallet?.savingsBalance)}</h2>
           </div>
         </div>
 
+        {/* Loan Card */}
         <div className="bg-gradient-to-br from-slate-700 to-slate-900 rounded-2xl p-6 text-white shadow-lg shadow-slate-900/20 relative overflow-hidden group">
           <div className="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
             <Icon name="Landmark" size={120} /> 
@@ -60,6 +73,13 @@ export const DashboardPage = () => {
           </div>
         </div>
       </div>
+
+      <TopupModal 
+        isOpen={isTopupModalOpen} 
+        onClose={() => setIsTopupModalOpen(false)} 
+        onSubmit={handleTopup}
+        isProcessing={isProcessing}
+      />
     </DashboardLayout>
   );
 };
