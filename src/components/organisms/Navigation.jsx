@@ -9,7 +9,7 @@ const DesktopSidebar = ({ navItems, onLogoutClick }) => (
   <aside className="hidden md:flex flex-col w-64 bg-slate-900 text-white h-screen fixed top-0 left-0 z-20">
     <div className="p-6 border-b border-slate-800 text-center flex items-center gap-3 justify-center">
       <Icon name="Leaf" className="text-kop-main" size={28} />
-      <h2 className="font-bold text-lg tracking-wide">Koperasi </h2>
+      <h2 className="font-bold text-lg tracking-wide">Smart Koperasi</h2>
     </div>
     <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
       {navItems.map((item) => (
@@ -71,13 +71,17 @@ export const Navigation = () => {
   
   const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
 
+  // Menu Publik / Member
   const navItems = [
     { path: '/dashboard', label: 'Saldo', icon: 'Wallet' },
+    { path: '/catalog', label: 'Katalog', icon: 'Store' }, // Menu Katalog Belanja
     { path: '/profile', label: 'Profil', icon: 'User' },
   ];
 
+  // Tambahan Menu Khusus Admin
   if (isAdmin) {
-    navItems.push({ path: '/admin/users', label: 'Anggota', icon: 'UserPlus' });
+    navItems.push({ path: '/admin/products', label: 'Produk', icon: 'PackageOpen' }); // <--- INI DITAMBAHKAN
+    navItems.push({ path: '/admin/users', label: 'Anggota', icon: 'Users' }); // Ubah UserPlus jadi Users agar lebih relevan
   }
 
   const handleLogoutConfirm = () => {
@@ -93,7 +97,7 @@ export const Navigation = () => {
       <ConfirmModal 
         isOpen={isLogoutModalOpen}
         title="Keluar dari Sistem"
-        message="Apakah Anda yakin ingin mengakhiri sesi dan keluar dari aplikasi Koperasi Desa?"
+        message="Apakah Anda yakin ingin mengakhiri sesi dan keluar dari aplikasi Smart Koperasi?"
         icon="LogOut"
         isDanger={true}
         confirmText="Ya, Keluar"
