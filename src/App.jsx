@@ -15,6 +15,8 @@ import { ProfilePage } from "./pages/ProfilePage.jsx";
 import { AdminUsersPage } from "./pages/AdminUsersPage.jsx";
 import { AdminProductPage } from "./pages/AdminProductPage.jsx";
 import { CatalogPage } from "./pages/CatalogPage.jsx";
+import { CartProvider } from "./contexts/CartContext.jsx";
+import { CheckoutPage } from "./pages/CheckoutPage.jsx";
 
 // Komponen internal untuk menangani transisi antar route
 const AnimatedRoutes = () => {
@@ -64,6 +66,14 @@ const AnimatedRoutes = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <CheckoutPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </AnimatePresence>
@@ -85,10 +95,14 @@ const ProtectedRoute = ({ children }) => {
 const App = () => {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Toaster position="top-center" />
-        <AnimatedRoutes />
-      </BrowserRouter>
+      <CartProvider>
+        {" "}
+        {/* <--- BUNGKUS DENGAN INI */}
+        <BrowserRouter>
+          <Toaster position="top-center" />
+          <AnimatedRoutes />
+        </BrowserRouter>
+      </CartProvider>
     </AuthProvider>
   );
 };
