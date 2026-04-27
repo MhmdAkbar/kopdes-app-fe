@@ -1,5 +1,5 @@
 // src/components/organisms/Navigation.jsx
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import Icon from '../atoms/Icon.jsx';
@@ -71,17 +71,16 @@ export const Navigation = () => {
   
   const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
 
-  // Menu Publik / Member
   const navItems = [
     { path: '/dashboard', label: 'Saldo', icon: 'Wallet' },
-    { path: '/catalog', label: 'Katalog', icon: 'Store' }, // Menu Katalog Belanja
+    { path: '/catalog', label: 'Katalog', icon: 'Store' },
+    { path: '/orders', label: 'Riwayat', icon: 'History' },
     { path: '/profile', label: 'Profil', icon: 'User' },
   ];
 
-  // Tambahan Menu Khusus Admin
   if (isAdmin) {
-    navItems.push({ path: '/admin/products', label: 'Produk', icon: 'PackageOpen' }); // <--- INI DITAMBAHKAN
-    navItems.push({ path: '/admin/users', label: 'Anggota', icon: 'Users' }); // Ubah UserPlus jadi Users agar lebih relevan
+    navItems.push({ path: '/admin/products', label: 'Produk', icon: 'PackageOpen' });
+    navItems.push({ path: '/admin/users', label: 'Anggota', icon: 'Users' });
   }
 
   const handleLogoutConfirm = () => {

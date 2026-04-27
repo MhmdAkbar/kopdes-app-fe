@@ -17,6 +17,7 @@ import { AdminProductPage } from "./pages/AdminProductPage.jsx";
 import { CatalogPage } from "./pages/CatalogPage.jsx";
 import { CartProvider } from "./contexts/CartContext.jsx";
 import { CheckoutPage } from "./pages/CheckoutPage.jsx";
+import { OrdersPage } from './pages/OrdersPage.jsx';
 
 // Komponen internal untuk menangani transisi antar route
 const AnimatedRoutes = () => {
@@ -75,6 +76,7 @@ const AnimatedRoutes = () => {
           }
         />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
       </Routes>
     </AnimatePresence>
   );
