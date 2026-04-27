@@ -1,6 +1,6 @@
 // src/components/molecules/OrderDetailModal.jsx
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { orderService } from '../../services/orderService.js';
 import Icon from '../atoms/Icon.jsx';
 import toast from 'react-hot-toast';

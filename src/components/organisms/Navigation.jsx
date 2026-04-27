@@ -76,6 +76,7 @@ export const Navigation = () => {
     { path: '/catalog', label: 'Katalog', icon: 'Store' },
     { path: '/orders', label: 'Riwayat', icon: 'History' },
     { path: '/profile', label: 'Profil', icon: 'User' },
+    { path: '/rencanaku', label: 'Rencanaku', icon: 'HandCoins' },
   ];
 
   if (isAdmin) {
