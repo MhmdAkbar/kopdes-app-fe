@@ -6,16 +6,25 @@ import Icon from '../atoms/Icon.jsx';
 export const LoanApplyModal = ({ isOpen, onClose, onSubmit, isProcessing }) => {
   const [formData, setFormData] = useState({ purpose: '', requestedAmount: '', requestedTenor: '6' });
 
-  // Reset form setiap kali modal dibuka
   useEffect(() => {
     if (isOpen) setFormData({ purpose: '', requestedAmount: '', requestedTenor: '6' });
   }, [isOpen]);
 
+  // Logika Thousand Separator yang sama dengan TopupModal
+  const handleAmountChange = (e) => {
+    const rawValue = e.target.value.replace(/\D/g, '');
+    const formattedValue = rawValue ? new Intl.NumberFormat('id-ID').format(rawValue) : '';
+    setFormData({ ...formData, requestedAmount: formattedValue });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Bersihkan titik sebelum dikirim ke API/Parent
+    const cleanAmount = formData.requestedAmount.replace(/\./g, '');
+    
     onSubmit({
       purpose: formData.purpose,
-      requestedAmount: Number(formData.requestedAmount),
+      requestedAmount: Number(cleanAmount),
       requestedTenor: Number(formData.requestedTenor)
     });
   };
@@ -38,8 +47,18 @@ export const LoanApplyModal = ({ isOpen, onClose, onSubmit, isProcessing }) => {
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1.5">Nominal Pengajuan (Rp)</label>
-            <input required type="number" min="500000" value={formData.requestedAmount} onChange={e => setFormData({...formData, requestedAmount: e.target.value})} className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-kop-main/20 focus:border-kop-main outline-none transition-all" placeholder="10000000" disabled={isProcessing}/>
+            <input 
+              required 
+              type="text" // Diubah ke text untuk format ribuan
+              inputMode="numeric"
+              value={formData.requestedAmount} 
+              onChange={handleAmountChange} 
+              className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-kop-main/20 focus:border-kop-main outline-none transition-all font-semibold" 
+              placeholder="Contoh: 10.000.000" 
+              disabled={isProcessing}
+            />
           </div>
+          {/* ... sisa kode tenor tetap sama ... */}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1.5">Tenor (Bulan)</label>
             <select value={formData.requestedTenor} onChange={e => setFormData({...formData, requestedTenor: e.target.value})} className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-kop-main/20 focus:border-kop-main outline-none transition-all bg-white" disabled={isProcessing}>

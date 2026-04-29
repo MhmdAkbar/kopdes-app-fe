@@ -35,6 +35,15 @@ export const loanService = {
   },
 
   /**
+   * Fetches specific loan details including installments
+   * @param {string} id - Loan ID
+   */
+  getLoanById: async (id) => {
+    const response = await api.get(`/loans/${id}`);
+    return response.data;
+  },
+
+  /**
    * Retrieves loans belonging to the authenticated member
    */
   getMyLoans: async () => {

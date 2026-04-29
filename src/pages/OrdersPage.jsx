@@ -77,7 +77,9 @@ export const OrdersPage = () => {
                     )}
                     <td className="p-5">
                       <p className="text-sm font-black text-kop-main">{formatRp(ord.totalAmount)}</p>
-                      <p className="text-[10px] text-slate-400 font-medium">{ord.paymentMethod === 'SAVINGS' ? 'Simpanan' : 'Kasbon'}</p>
+                      <p className={`text-[10px] font-bold ${ord.paymentMethod === 'SAVINGS' ? 'text-emerald-500' : 'text-blue-500'}`}>
+                        {ord.paymentMethod === 'SAVINGS' ? 'Simpanan' : 'Pinjaman'}
+                      </p>
                     </td>
                     <td className="p-5 text-center">
                       <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${

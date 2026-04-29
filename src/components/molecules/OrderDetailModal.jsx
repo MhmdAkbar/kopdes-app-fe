@@ -1,6 +1,6 @@
 // src/components/molecules/OrderDetailModal.jsx
 import React, { useState, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { orderService } from '../../services/orderService.js';
 import Icon from '../atoms/Icon.jsx';
 import toast from 'react-hot-toast';
@@ -79,7 +79,7 @@ export const OrderDetailModal = ({ isOpen, onClose, orderId }) => {
 
                   <div className="bg-slate-900 rounded-2xl p-5 text-white">
                     <div className="flex justify-between items-center mb-2 text-xs text-slate-400">
-                      <span>Metode: {order.paymentMethod === 'SAVINGS' ? 'Simpanan' : 'Potong Kasbon'}</span>
+                      <span>Sumber Dana: <strong className={order.paymentMethod === 'SAVINGS' ? 'text-emerald-400' : 'text-blue-400'}>{order.paymentMethod === 'SAVINGS' ? 'Dompet Utama' : 'Dana Pinjaman'}</strong></span>
                       <span className={`font-bold ${order.status === 'COMPLETED' ? 'text-emerald-400' : order.status === 'PENDING' ? 'text-amber-400' : 'text-red-400'}`}>
                         {order.status}
                       </span>

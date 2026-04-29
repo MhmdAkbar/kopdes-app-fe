@@ -6,12 +6,21 @@ import Icon from '../atoms/Icon.jsx';
 export const LoanReviewModal = ({ isOpen, onClose, onSubmit, isProcessing, loan }) => {
   const [formData, setFormData] = useState({ approvedAmount: '', approvedTenor: '', approvedMargin: '5', adminNotes: '' });
 
+  // Formatter untuk tampilan label & estimasi (tetap konsisten)
   const formatRp = (v) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(v || 0);
+
+  // Formatter internal untuk input (hanya angka ke format titik)
+  const toThousand = (val) => {
+    if (!val) return '';
+    const raw = val.toString().replace(/\D/g, '');
+    return new Intl.NumberFormat('id-ID').format(raw);
+  };
 
   useEffect(() => {
     if (isOpen && loan) {
       setFormData({
-        approvedAmount: loan.requestedAmount,
+        // Pastikan data awal dari member juga langsung diformat ribuan
+        approvedAmount: toThousand(loan.requestedAmount),
         approvedTenor: loan.requestedTenor,
         approvedMargin: '5',
         adminNotes: ''
@@ -20,7 +29,8 @@ export const LoanReviewModal = ({ isOpen, onClose, onSubmit, isProcessing, loan 
   }, [isOpen, loan]);
 
   const calculateInstallment = () => {
-    const amount = Number(formData.approvedAmount) || 0;
+    // Bersihkan titik sebelum menghitung
+    const amount = Number(formData.approvedAmount.toString().replace(/\./g, '')) || 0;
     const margin = Number(formData.approvedMargin) || 0;
     const tenor = Number(formData.approvedTenor) || 1;
     return (amount + (amount * (margin / 100))) / tenor;
@@ -28,9 +38,12 @@ export const LoanReviewModal = ({ isOpen, onClose, onSubmit, isProcessing, loan 
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Bersihkan titik sebelum dikirim ke API
+    const cleanAmount = formData.approvedAmount.toString().replace(/\./g, '');
+    
     onSubmit({
       status: 'OFFERED',
-      approvedAmount: Number(formData.approvedAmount),
+      approvedAmount: Number(cleanAmount),
       approvedTenor: Number(formData.approvedTenor),
       approvedMargin: Number(formData.approvedMargin),
       adminNotes: formData.adminNotes
@@ -63,13 +76,22 @@ export const LoanReviewModal = ({ isOpen, onClose, onSubmit, isProcessing, loan 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1.5">Plafon Disetujui (Rp)</label>
-                <input required type="number" value={formData.approvedAmount} onChange={e => setFormData({...formData, approvedAmount: e.target.value})} className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-kop-main/20 focus:border-kop-main outline-none font-mono" disabled={isProcessing}/>
+                <input 
+                  required 
+                  type="text" // Diubah ke text agar bisa pakai format ribuan
+                  inputMode="numeric"
+                  value={formData.approvedAmount} 
+                  onChange={e => setFormData({...formData, approvedAmount: toThousand(e.target.value)})} 
+                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-kop-main/20 focus:border-kop-main outline-none font-bold text-slate-800" 
+                  disabled={isProcessing}
+                />
               </div>
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1.5">Tenor Disetujui (Bulan)</label>
                 <input required type="number" value={formData.approvedTenor} onChange={e => setFormData({...formData, approvedTenor: e.target.value})} className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-kop-main/20 focus:border-kop-main outline-none font-mono" disabled={isProcessing}/>
               </div>
             </div>
+            {/* ... bagian margin dan catatan tetap sama ... */}
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-1.5">Bagi Hasil / Margin Koperasi (%)</label>
               <div className="relative">
@@ -94,7 +116,7 @@ export const LoanReviewModal = ({ isOpen, onClose, onSubmit, isProcessing, loan 
         <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-3">
           <button type="button" onClick={onClose} className="px-6 py-2.5 rounded-xl font-bold text-slate-500 hover:bg-slate-200 transition-colors" disabled={isProcessing}>Batal</button>
           <Button type="submit" form="reviewForm" disabled={isProcessing} className="!w-auto px-8 shadow-md">
-            {isProcessing ? 'Memproses...' : 'Kirim Penawaran'}
+            {isProcessing ? 'Kirim Penawaran' : 'Kirim Penawaran'}
           </Button>
         </div>
       </div>
